@@ -17,14 +17,14 @@ jobs:
     permissions:
       contents: write
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         platform:
           - target: "aarch64-apple-darwin"
           - target: "x86_64-apple-darwin"
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Protoc
         run: brew install protobuf
 
@@ -56,68 +56,24 @@ jobs:
           generate_release_notes: true
           draft: false
 
-  # --- Linux Musl 编译 ---
-  linux:
-    runs-on: ubuntu-latest
-    name: linux (${{ matrix.platform.target }})
-    permissions:
-      contents: write
-    strategy:
-      fail-fast: true
-      matrix:
-        platform:
-          - target: "x86_64-unknown-linux-musl"
-          - target: "aarch64-unknown-linux-musl"
-    container:
-      image: docker://ghcr.io/rust-cross/rust-musl-cross:${{ matrix.platform.target }}
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install Protoc & Utils
-        run: |
-          apt-get update -y -qq
-          apt-get install -y -qq protobuf-compiler zip git llvm python3
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform.target }}
-
-      - name: Build release
-        run: cargo build --release --locked --target ${{ matrix.platform.target }}
-
-      - name: Strip & UPX
-        continue-on-error: true
-        uses: svenstaro/upx-action@v2
-        with:
-          files: |
-            target/${{ matrix.platform.target }}/release/stat_server
-            target/${{ matrix.platform.target }}/release/stat_client
-          args: --best --lzma
-
-      - name: Package Release
-        run: |
-          python3 scripts/package_release.py --target ${{ matrix.platform.target }} --bin-dir target/${{ matrix.platform.target }}/release
-        shell: bash
-
-      - name: Upload binaries to GitHub Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: dist/*.zip
-          generate_release_notes: true
-          draft: false
-
-  # --- Windows & Android 编译 ---
-  windows-or-linux-others:
-    name: Cross build for ${{ matrix.platform.target }}
+  # --- Linux, Android, Windows 编译 ---
+  cross-build:
+    name: Build for ${{ matrix.platform.target }}
     runs-on: ${{ matrix.platform.os }}
     permissions:
       contents: write
     strategy:
+      fail-fast: false
       matrix:
         platform:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            suffix: ""
+            use-cross: true
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            suffix: ""
+            use-cross: true
           - os: ubuntu-latest
             target: aarch64-linux-android
             suffix: ""
@@ -149,7 +105,7 @@ jobs:
 
       - name: Install Cross
         if: matrix.platform.use-cross
-        run: cargo install cross --git https://github.com/cross-rs/cross
+        uses: taiki-e/install-action@cross
 
       - name: Build release
         run: |
