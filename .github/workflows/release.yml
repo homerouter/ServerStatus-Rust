@@ -74,10 +74,6 @@ jobs:
             target: aarch64-unknown-linux-musl
             suffix: ""
             use-cross: true
-          - os: ubuntu-latest
-            target: armv7-unknown-linux-musleabihf
-            suffix: ""
-            use-cross: true
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             suffix: .exe
