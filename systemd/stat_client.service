@@ -10,7 +10,7 @@ WorkingDirectory=/opt/ServerStatus
 # EnvironmentFile=/opt/ServerStatus/.env
 ExecStart=/opt/ServerStatus/stat_client -a "http://127.0.0.1:8080/report" -u h1 -p p1
 ExecReload=/bin/kill -HUP $MAINPID
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

@@ -88,7 +88,40 @@ impl StatsMgr {
         STAT_SENDER.set(stat_tx).unwrap();
         let (notifier_tx, notifier_rx) = sync_channel(512);
 
-        let stat_map: Arc<Mutex<HashMap<String, Arc<HostStat>>>> = Arc::new(Mutex::new(HashMap::new()));
+        let mut initial_stat_map = HashMap::new();
+        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        if let Ok(hosts_map_guard) = hosts_map_base.lock() {
+            for (name, host) in hosts_map_guard.iter() {
+                let stat = HostStat {
+                    name: host.name.clone(),
+                    alias: if host.alias.is_empty() {
+                        host.name.clone()
+                    } else {
+                        host.alias.clone()
+                    },
+                    host_type: host.r#type.clone(),
+                    location: host.location.clone(),
+                    notify: host.notify,
+                    online4: false,
+                    online6: false,
+                    uptime_str: "-".to_string(),
+                    last_network_in: host.last_network_in,
+                    last_network_out: host.last_network_out,
+                    network_in: host.last_network_in,
+                    network_out: host.last_network_out,
+                    labels: host.labels.clone(),
+                    gid: host.gid.clone(),
+                    weight: host.weight,
+                    pos: host.pos,
+                    disabled: host.disabled,
+                    latest_ts: now,
+                    ..Default::default()
+                };
+                initial_stat_map.insert(name.clone(), Arc::new(stat));
+            }
+        }
+        let stat_map: Arc<Mutex<HashMap<String, Arc<HostStat>>>> =
+            Arc::new(Mutex::new(initial_stat_map));
 
         // stat_rx thread
         thread::spawn({
@@ -281,9 +314,11 @@ impl StatsMgr {
                             if o.notify && latest_notify_ts + cfg.notify_interval < now {
                                 if o.online4 || o.online6 {
                                     Some(Event::Custom)
-                                } else {
+                                } else if o.latest_ts + cfg.offline_threshold < now {
                                     o.disabled = true;
                                     Some(Event::NodeDown)
+                                } else {
+                                    None
                                 }
                             } else {
                                 None

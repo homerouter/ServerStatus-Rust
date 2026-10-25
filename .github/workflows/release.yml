@@ -42,23 +42,17 @@ jobs:
           strip target/${{ matrix.platform.target }}/release/stat_client
         shell: bash
 
-      - name: Zip Release
-        uses: TheDoctor0/zip-release@0.7.6
-        with:
-          type: zip
-          filename: ServerStatus-${{ matrix.platform.target }}.zip
-          directory: ./
-          path: |
-            target/${{ matrix.platform.target }}/release/stat_server
-            target/${{ matrix.platform.target }}/release/stat_client
-            config.toml
+      - name: Package Release
+        run: |
+          python3 scripts/package_release.py --target ${{ matrix.platform.target }} --bin-dir target/${{ matrix.platform.target }}/release
+        shell: bash
 
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ github.ref_name }}
-          files: ServerStatus-${{ matrix.platform.target }}.zip
+          files: dist/*.zip
           generate_release_notes: true
           draft: false
 
@@ -82,7 +76,7 @@ jobs:
       - name: Install Protoc & Utils
         run: |
           apt-get update -y -qq
-          apt-get install -y -qq protobuf-compiler zip git llvm
+          apt-get install -y -qq protobuf-compiler zip git llvm python3
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -101,23 +95,17 @@ jobs:
             target/${{ matrix.platform.target }}/release/stat_client
           args: --best --lzma
 
-      - name: Zip Release
-        uses: TheDoctor0/zip-release@0.7.6
-        with:
-          type: zip
-          filename: ServerStatus-${{ matrix.platform.target }}.zip
-          directory: ./
-          path: |
-            target/${{ matrix.platform.target }}/release/stat_server
-            target/${{ matrix.platform.target }}/release/stat_client
-            config.toml
+      - name: Package Release
+        run: |
+          python3 scripts/package_release.py --target ${{ matrix.platform.target }} --bin-dir target/${{ matrix.platform.target }}/release
+        shell: bash
 
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ github.ref_name }}
-          files: ServerStatus-${{ matrix.platform.target }}.zip
+          files: dist/*.zip
           generate_release_notes: true
           draft: false
 
@@ -181,28 +169,16 @@ jobs:
             target/${{ matrix.platform.target }}/release/stat_client${{matrix.platform.suffix}}
           args: --best --lzma
 
-      # 修复：显式拷贝文件到统一目录，避免 Windows 打包找不到路径
-      - name: Prepare Assets
+      - name: Package Release
         run: |
-          mkdir -p ./assets/
-          cp target/${{ matrix.platform.target }}/release/stat_server${{matrix.platform.suffix}} ./assets/
-          cp target/${{ matrix.platform.target }}/release/stat_client${{matrix.platform.suffix}} ./assets/
-          cp config.toml ./assets/
+          python3 scripts/package_release.py --target ${{ matrix.platform.target }} --bin-dir target/${{ matrix.platform.target }}/release --suffix "${{ matrix.platform.suffix }}" || python scripts/package_release.py --target ${{ matrix.platform.target }} --bin-dir target/${{ matrix.platform.target }}/release --suffix "${{ matrix.platform.suffix }}"
         shell: bash
-
-      - name: Zip Release
-        uses: TheDoctor0/zip-release@0.7.6
-        with:
-          type: zip
-          filename: ServerStatus-${{ matrix.platform.target }}.zip
-          directory: ./assets/
-          path: .
 
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ github.ref_name }}
-          files: ./assets/ServerStatus-${{ matrix.platform.target }}.zip
+          files: dist/*.zip
           generate_release_notes: true
           draft: false
