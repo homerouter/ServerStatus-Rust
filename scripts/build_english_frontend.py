@@ -150,6 +150,12 @@ def patch_content(html: str, js: str):
         "children:e.online4||e.online6?(e.uptime||\"\").replace(\" \\u5929\",\" days\").replace(\"\\u5929\",\"d\"):",
     )
 
+    # Fix 1970 Unix epoch timestamp on initial page load / refresh
+    target_updated = 'r=function(e){const t=e.getFullYear(),n="".concat(e.getMonth()+1).padStart(2,"0"),r="".concat(e.getDate()).padStart(2,"0"),a="".concat(e.getHours()).padStart(2,"0"),o="".concat(e.getMinutes()).padStart(2,"0"),i="".concat(e.getSeconds()).padStart(2,"0");return"".concat(t,"-").concat(n,"-").concat(r," ").concat(a,":").concat(o,":").concat(i)}(new Date(1e3*t.updated))'
+    replacement_updated = 'r=t.updated>0?function(e){const t=e.getFullYear(),n="".concat(e.getMonth()+1).padStart(2,"0"),r="".concat(e.getDate()).padStart(2,"0"),a="".concat(e.getHours()).padStart(2,"0"),o="".concat(e.getMinutes()).padStart(2,"0"),i="".concat(e.getSeconds()).padStart(2,"0");return"".concat(t,"-").concat(n,"-").concat(r," ").concat(a,":").concat(o,":").concat(i)}(new Date(1e3*t.updated)):"-"'
+    if target_updated in js:
+        js = js.replace(target_updated, replacement_updated, 1)
+
     target_load = '(0,Be.jsx)("div",{className:"col-start-1 col-end-7 text-right",children:"Load:"}),'
     replacement_protocol_load = '(0,Be.jsx)("div",{className:"col-start-1 col-end-7 text-right",children:"Protocol:"}),(0,Be.jsxs)("div",{className:"col-start-7 col-end-13 text-left",children:["IPv4: ",e.online4?"Online 🟢":"Offline 🔴","  |  IPv6: ",e.online6?"Online 🟢":"Offline 🔴"]}),' + target_load
     if target_load in js:
