@@ -6,15 +6,92 @@
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="keywords" content="ServerStatus,探针,威力加强版,ServerStatus-Rust,ServerStatusRust,云探针" />
-    <meta name="description" content="ServerStatus 探针 威力加强版 ServerStatus-Rust">
+    <meta name="keywords" content="ServerStatus,Tailnet,ServerStatus,Fleet,Monitoring" />
+    <meta name="description" content="Tailnet Fleet Server Status Monitoring">
     <meta name="author" content="zdz">
     <meta name="robots" content="noindex">
     <link rel="apple-touch-icon" href="/logo192.svg" />
     <link rel="manifest" href="/manifest.json" />
-    <title>ServerStatus-Rust</title>
-    <script defer="defer" src="/static/js/main.32884401.js"></script>
-    <link href="/static/css/main.479df68b.css" rel="stylesheet">
+    <title>Tailnet Fleet Status</title>
+    <script defer="defer" src="/static/js/main.32884401.js?v=20261013_tab"></script>
+    <link href="/static/css/main.479df68b.css?v=20261013_tab" rel="stylesheet">
+
+<style>
+/* ServerStatus Fleet Tab Navigation */
+.ssr-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  padding: 0 4px;
+  flex-wrap: wrap;
+}
+.ssr-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.ssr-tab-btn-active {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border-color: #4338ca;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.ssr-tab-btn-inactive {
+  background-color: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+.ssr-tab-btn-inactive:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+.dark .ssr-tab-btn-active {
+  background-color: #10b981;
+  color: #0f172a;
+  border-color: #059669;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+.dark .ssr-tab-btn-inactive {
+  background-color: #334155;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+.dark .ssr-tab-btn-inactive:hover {
+  background-color: #3e4f68;
+  color: #f8fafc;
+}
+.ssr-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.15);
+  line-height: 1.2;
+}
+.dark .ssr-tab-btn-active .ssr-tab-badge {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #0f172a;
+}
+.dark .ssr-tab-btn-inactive .ssr-tab-badge {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+</style>
+
 </head>
 
 <body>

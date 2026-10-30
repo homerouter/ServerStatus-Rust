@@ -1,6 +1,7 @@
 [Unit]
 Description=ServerStatus-Rust Server
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 #User=nobody
@@ -9,7 +10,8 @@ Environment="RUST_BACKTRACE=1"
 WorkingDirectory=/opt/ServerStatus
 ExecStart=/opt/ServerStatus/stat_server -c /opt/ServerStatus/config.toml
 ExecReload=/bin/kill -HUP $MAINPID
-Restart=on-failure
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
