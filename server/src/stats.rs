@@ -212,8 +212,10 @@ impl StatsMgr {
 
                         // uptime str
                         let day = stat_t.uptime / (3600 * 24);
-                        if day > 0 {
-                            stat_t.uptime_str = format!("{day} 天");
+                        if day > 1 {
+                            stat_t.uptime_str = format!("{day} days");
+                        } else if day == 1 {
+                            stat_t.uptime_str = format!("{day} day");
                         } else {
                             stat_t.uptime_str = format!(
                                 "{:02}:{:02}:{:02}",

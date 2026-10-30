@@ -56,7 +56,7 @@ function check_arch() {
             arch=aarch64
         ;;
         *)
-            err "暂不支持该系统架构"
+            err "System architecture not supported"
             exit 1
         ;;
     esac
@@ -76,7 +76,7 @@ function install_deps() {
     for i in "${!cmd_deps[@]}"; do
         cur_dep="${cmd_deps[$i]}"
         if [ ! -x "$(command -v $cur_dep 2>/dev/null)" ]; then
-            say "$cur_dep 未安装"
+            say "$cur_dep is not installed"
             need_deps="$cur_dep ${need_deps}"
         fi
     done
@@ -92,13 +92,13 @@ function install_deps() {
         elif [ -x "$(command -v yum 2>/dev/null)" ]; then
             yum install -y  ${need_deps} > /dev/null 2>&1
         else
-            err "未找到合适的包管理工具,请手动安装: ${need_deps}"
+            err "No suitable package manager found, please manually install: ${need_deps}"
             exit 1
         fi
         for i in "${!cmd_deps[@]}"; do
             cur_dep="${cmd_deps[$i]}"
             if [ ! -x "$(command -v $cur_dep)" ]; then
-                err "$cur_dep 未成功安装,请尝试手动安装!"
+                err "$cur_dep failed to install, please try manual installation!"
                 exit 1
             fi
         done
@@ -116,7 +116,7 @@ function download_client() {
         say "using cn mirror: coding.net"
         wget --no-check-certificate -qO "client-${arch}-unknown-linux-musl.zip" "https://d0ge-generic.pkg.coding.net/ServerStatus-Rust/releases/client-${arch}-unknown-linux-musl-v{{pkg_version}}.zip?version=v{{pkg_version}}"
     else
-        wget --no-check-certificate -qO "client-${arch}-unknown-linux-musl.zip" "https://github.com/zdz/ServerStatus-Rust/releases/download/v{{pkg_version}}/client-${arch}-unknown-linux-musl.zip"
+        wget --no-check-certificate -qO "client-${arch}-unknown-linux-musl.zip" "https://github.com/homerouter/ServerStatus-Rust/releases/download/v{{pkg_version}}/client-${arch}-unknown-linux-musl.zip"
     fi
 
     say "download stat_client succ"

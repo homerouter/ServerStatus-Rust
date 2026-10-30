@@ -301,13 +301,13 @@ pub async fn get_detail(
     table.set_titles(row![
         "#",
         "Id",
-        "节点名",
-        "位置",
-        "在线时间",
+        "Node",
+        "Location",
+        "Uptime",
         "IP",
-        "系统信息",
-        "IP信息",
-        "磁盘信息"
+        "System Info",
+        "IP Info",
+        "Disk Info"
     ]);
     for (idx, host) in o.servers.iter().enumerate() {
         let sys_info = host

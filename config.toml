@@ -71,8 +71,8 @@ chat_id = "<chat id>"
 # 例如 host.name 可替换为 host.alias，大家根据自己的喜好来编写通知消息
 # {{ip_info.query}} 主机 ip, {{sys_info.host_name}} 主机 hostname，见 server_status.proto
 title = "❗<b>Server Status</b>"
-online_tpl =  "{{config.title}} \n😆 {{host.location}} {{host.name}} 主机恢复上线啦"
-offline_tpl = "{{config.title}} \n😱 {{host.location}} {{host.name}} 主机已经掉线啦"
+online_tpl = "{{config.title}}\n🟢 <b>{{host.location}} {{host.alias | default(host.name)}}</b> is back online!"
+offline_tpl = "{{config.title}}\n🔴 <b>{{host.location}} {{host.alias | default(host.name)}}</b> is OFFLINE!"
 # custom 模板置空则停用自定义告警，只保留上下线通知
 custom_tpl = """
 {% if host.memory_used / host.memory_total > 0.5  %}
