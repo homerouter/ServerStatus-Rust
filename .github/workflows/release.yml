@@ -33,7 +33,7 @@ jobs:
           targets: ${{ matrix.platform.target }}
 
       - name: Build release
-        run: cargo build --release --locked --target ${{ matrix.platform.target }}
+        run: cargo build --release --target ${{ matrix.platform.target }}
 
       - name: Strip & UPX
         continue-on-error: true
@@ -102,9 +102,9 @@ jobs:
       - name: Build release
         run: |
           if [ "${{ matrix.platform.use-cross }}" = "true" ]; then
-            cross build --locked --release --target=${{ matrix.platform.target }}
+            cross build --release --target=${{ matrix.platform.target }}
           else
-            cargo build --locked --release --target=${{ matrix.platform.target }}
+            cargo build --release --target=${{ matrix.platform.target }}
           fi
         shell: bash
 
